@@ -21,16 +21,10 @@ global $sourcedir, $smcFunc; // line probably not needed.
 require_once($sourcedir . '/Subs.php');
 require_once($sourcedir . '/Subs-Graphics.php');
 
-/*
-SB_ResizePhotos is set
-SB_ResizePhotos is not empty
-SB_MaxSize is set
-*/
-
 if(
+	isset($msgOptions) && isset($msgOptions['id']) && // If we can find Id for post 
 	!empty($msgOptions['attachments']) && Count($msgOptions['attachments']) > 0 && // If new attachments are added
-	isset($_REQUEST['SB_ResizePhotos']) && isset($_REQUEST['SB_MaxSize']) && // Needed form values are set
-	isset($msgOptions) && isset($msgOptions['id']) // If we can find Id for post 
+	isset($_REQUEST['SB_ResizePhotos']) && isset($_REQUEST['SB_MaxSize']) // Needed form values are set
 )
 {
 	$max_size = (int) $_REQUEST['SB_MaxSize'];
@@ -60,7 +54,7 @@ if(
 		if($width < $max_size && $height < $max_size)
 			continue;
 		
-		// Calculate new size (used for Update query but not by resize method)
+		// Calculate new size (used for Update query but not by resize function)
 		if($height > $width)
 		{
 			$new_width = floor($width * $max_size / $height);
@@ -98,8 +92,5 @@ if(
 	
 	$smcFunc['db_free_result']($request);
 }
-
-// echo '<a href="http://linuxwebserver01/smf/index.php?topic=' . $topicOptions['id'] . '.0" >Return to topic</a><br><br>';
-// die('Debug done :)');
 
 ?>
