@@ -2,10 +2,10 @@
 A repository for the code and documentation of a "Simple Machines Forum"-modification that allows user to shrink the size of attached photos. The modification strives to meet the demands of administrators and users of the Swebrick.se forum.
 
 ## Current state
-Current code is a working proof of concept of the idea. It is unknown if it meets the demands of the demands of administrators and users. 
+Current code is a working proof of concept of the idea. It is unknown if it meets the demands of the administrators and users. 
 
 ## How it works
-For forums users, this modification will give the user the option resize the attached photos to a new smaller size. 
+For forums users, this modification will give the user the option to resize the attached photos to a new smaller size. 
 
 ![Proof of concept image](https://github.com/henrikzwomp/SmfPhotoResizeMod/blob/master/modification_poc01.png "Proof of concept image")
 
@@ -20,6 +20,10 @@ Currently only files that are marked as "image/jpeg" in the database will be res
 - Each theme allowed by the forum might need to be modified for the modification to work.
 - Language is hard coded.
 
+### Version History
+September 2017 - First initial proof of concept.
+November 2017 - Added code to handle images that are marked rotated and/or flipped in the EXIF data.
+
 ## Installation
 Copy the file *SwebrickMod_AttachmentResizer.php* to the *Source* folder of the SMF installation. (It doesn't need to be in that folder, but code below assumes it is)
 
@@ -31,9 +35,9 @@ Add the following line before the code that redirects the user to new page. (Loo
 include($sourcedir . '/SwebrickMod_AttachmentResizer.php');
 ```
 
-The code above will include the code that does the photo resizing, but for it to work we need to add new HTML elements to the Post page. 
+The line above will include the code that does the photo resizing, but for it to work we need to add new HTML elements to the Post page. 
 
-In the folder for the theme you want to add this modifcation on, open up the file named *Post.template.php*. If it doesn't exists, then you'll need to modify the default theme instead. 
+In the folder for the theme where you want to add this modifcation, open up the file named *Post.template.php*. If it doesn't exists, then you'll need to modify the default theme instead. 
 
 At a suitable place within the Form-tags add the following code. 
 
