@@ -24,7 +24,7 @@ require_once($sourcedir . '/Subs-Graphics.php');
 
 if(
 	!empty($msgOptions['attachments']) && Count($msgOptions['attachments']) > 0 && // If new attachments are added
-	isset($_REQUEST['SB_ResizePhotos']) && isset($_REQUEST['SB_MaxSize']) && // Needed form values are set
+	isset($_REQUEST['SB_ResizePhotos']) && isset($_REQUEST['SB_MaxSize']) && // Needed form values are set (SB_ResizePhotos will not be set if not checked)
 	isset($msgOptions) && isset($msgOptions['id']) // If we can find Id for post 
 )
 {
@@ -32,17 +32,17 @@ if(
 	
 	// Get data for all new attachemnts from database
 	$request = $smcFunc['db_query']('', '
-		SELECT id_attach, id_thumb, filename, file_hash, width, height
+		SELECT id_attach, id_thumb, filename, file_hash, width, height, mime_type
 		FROM {db_prefix}attachments
 		WHERE id_msg = {int:id_msg} 
 		AND id_attach IN ({array_int:attachment_list})
 		AND attachment_type = {int:attachment_type}
-		AND mime_type = {string:mime_type}', 
+		AND mime_type IN ({array_string:mime_type})', 
 		array(
 			'id_msg' => $msgOptions['id'], 
 			'attachment_list' => $msgOptions['attachments'],
 			'attachment_type' => 0,
-			'mime_type' => 'image/jpeg'
+			'mime_type' => array('image/jpeg','image/png','image/gif')
 		)
 	);
 	
@@ -54,14 +54,17 @@ if(
 		// Get file path for file
 		$file_path = getAttachmentFilename($row['filename'], $row['id_attach'], null, false, $row['file_hash']);
 		
-		// Retreive Orientation from EXIF data
+		// If JPEG, retreive Orientation from EXIF data
 		$orientation = 0;
-		$exif = exif_read_data($file_path);
-		if(!($exif===false))
+		if($row['mime_type'] == 'image/jpeg')
 		{
-			if(isset($exif["Orientation"]))
+			$exif = exif_read_data($file_path);
+			if(!($exif===false))
 			{
-				$orientation = $exif["Orientation"];
+				if(isset($exif["Orientation"]))
+				{
+					$orientation = $exif["Orientation"];
+				}
 			}
 		}
 
@@ -104,7 +107,7 @@ if(
 			rename($temp_file_path, $file_path);
 			
 			// If picture needs to be rotated (and/or flipped)
-			// (Image only needs to rotated if resized. EXIF data is not preserved in the resize)
+			// (Image only needs to rotated if resized because EXIF data is not preserved in that process.)
 			if($rotation_needed)
 			{
 				$degree = 0;
